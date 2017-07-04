@@ -173,33 +173,6 @@ EvaluateStatistics <- function(net.true, net){
   return(list(recall=recall.avg, precision=precision.avg, F=F.avg, str.acc=str.acc))
 }
 
-PrintLosses <- function(ts.multi, nets){
-  cat("Loss by genes:", "\n")
-  for (g in 1:n){
-    cat("Gene:", g, "\n")
-    i <- 0
-    for (net in nets){
-      i <- i+1
-      cat(sprintf("Likelihood of net %d:", i),
-          LossGeneTimeseries(ts.multi, net, g), "| ")
-      cat(sprintf("Prior of net %d:", i),
-          LossPriorGene(net, g),
-          "\n")
-    }
-  }
-}
-
-CompareInteractions <- function(nets){
-  ## Useless so far.
-  for (g in 1:n){
-    input.list[[g]] <- list()
-    input.list[[g]][[1]] <- net.true$interactions[[g]][[1]]$input
-    input.list[[g]][[2]] <- net.inferred$interactions[[g]][[1]]$input
-    input.list[[g]][[3]] <- net.inferred.partial$interactions[[g]][[1]]$input
-    input.list[[g]][[4]] <- net.bestfit$interactions[[g]][[1]]$input
-  }
-}
-
 PBNtoGraph <- function(net, fname=""){
   n <- length(net$genes)
   edges <- c()
