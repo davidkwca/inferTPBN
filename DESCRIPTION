@@ -1,0 +1,22 @@
+Package: inferTPBN
+Title: Infer Threshold PBNs from Timeseries Data.
+Version: 0.1
+Authors@R: person("David", "Kaltenpoth", email = "davidkwca@gmail.com",
+                  role = c("aut", "cre"))
+Description: Create and simulate random Threshold Probabilistic Boolean Networks
+    with a desired topology. Also given data from multiple timeseries, infer a
+    TPBN which optimizes an MDL-penalized log-likelihood of the data.
+Depends: R (>= 3.4.0)
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1.9000
+Imports: BoolNet,
+    entropy,
+    foreach,
+    doParallel,
+    igraph,
+    compositions,
+    Rsolnp
+Suggests: devtools,
+    roxygen2
