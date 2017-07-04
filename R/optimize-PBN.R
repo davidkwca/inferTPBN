@@ -206,6 +206,7 @@ innovateGene <- function(ts.multi, net, g,
   net$interactions[[g]][[L]] <- iG.best
   return(net)
 }
+
 ##' des
 ##'
 ##' det
@@ -258,6 +259,7 @@ innovateGeneUntilSaturated <- function(ts.multi, net, g,
   }
   return(net.new)
 }
+
 ##' des
 ##'
 ##' det
