@@ -1,7 +1,8 @@
-##' Returns the loss of the network on the timeseries.
+##' Compute loss of the network on the timeseries.
 ##'
-##' Stuff.
-##' @title Loss function for time series.
+##' This computes the complete loss of the network on a timeseries.
+##' If desired, the prior penalty can be included.
+##'
 ##' @param ts.multi List of timeseries.
 ##' @param net A PBN.
 ##' @param prior whether or not the prior should be included. Defaults to TRUE.
@@ -30,7 +31,14 @@ Loss <- function(ts.multi, net, prior=TRUE){
 }
 
 
-##' @title Penalty for single gene's regulatory set's complexity.
+##' Compute the prior penalty for the network.
+##'
+##'
+##' Can take either a BoolNet network or a TPBN and computes the penalty on the
+##' network for its complexity.
+##' The penalty is given by having to encode the number of inputs, the set of
+##' actual inputs, and the Boolean function on these inputs.
+##'
 ##' @param net A network, either threshold PBN or BoolNet net.
 ##' @param g The gene to be penalized.
 ##' @return A float.
@@ -38,24 +46,29 @@ LossPriorGene <- function(net, g){
   n <- length(net$genes)
   interactions <- net$interactions[[g]]
   c.genes <- sapply(interactions, function(x) x$probability)
-  entropy <- entropy.empirical(c.genes)
 
-  ## If it's threshold PBN, the a parameter is used. Otherwise the complexity
+  ## If it's a threshold PBN, the a parameter is used. Otherwise the complexity
   ## of the parent functions are used.
   if(!is.null(interactions[[1]]$a)){
     A <- sapply(interactions, function(x) sum(x$a != 0))
+    size.cost <- sum(log(A))
     choice.cost <- sum(log(choose(n, A)))
     function.cost <- sum(log(2^A))
   } else {
     parent.size <- sapply(interactions, function(x) length(x$input))
+    size.cost <- sum(log(parent.size))
     choice.cost <- sum(log(choose(n, parent.size)))
     function.cost <- sum(log(2 ^ (2 ^ parent.size)))
   }
-  return(choice.cost + function.cost + entropy)
+  return(size.cost + choice.cost + function.cost)
 }
 
-
-##' @title The loss on timeseries data for a single gene.
+##' Computes the loss for a gene over a list of timeseries.
+##'
+##'
+##' Makes use of \code{\link{LossGene}}, which computes the loss for only a
+##' single timeseries.
+##'
 ##' @param ts.multi A list of timeseries.
 ##' @param net A network.
 ##' @param g A gene.
@@ -66,7 +79,12 @@ LossGeneTimeseries <- function(ts.multi, net, g){
 }
 
 
-##' @title The total loss of the network on a single gene.
+##' Compute the total loss for a gene.
+##'
+##'
+##' This includes both the predictions on the timeseries as well as the penalty
+##' for its complexity.
+##'
 ##' @param ts.multi A list of timeseries.
 ##' @param net A network.
 ##' @param g A gene.
@@ -82,7 +100,7 @@ LossPrior <- function(net){
   n <- length(net$genes)
   loss.all <- t(sapply(1:n,
                        function(g) LossPriorGene(net, g)))
-  return(loss.all)
+  return(sum(loss.all))
 }
 
 LossGene <- function(timeseries, net, g){

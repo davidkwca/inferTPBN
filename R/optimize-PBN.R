@@ -1,8 +1,11 @@
-##' des
+##' Optimize a subset of threshold parameters.
 ##'
-##' det
-##' @title Find the best threshold parameters for a single gene regulatory
-##'   function, holding everything else constant.
+##'
+##' While holding everything but the subset constant, optimize over this subset.
+##' This essentially just tries every possible combination for the values on
+##' this subset. However, zeroes are not allowed, as they have been found never
+##' to come up while making the inference much, much, slower.
+##'
 ##' @param ts.multi A list of timeseries.
 ##' @param net A network.
 ##' @param g A gene.
@@ -47,10 +50,11 @@ bestPartialA <- function(ts.multi, net, g, i, subset){
 }
 
 
-##' des
+##' Jointly optimize all threshold parameters.
 ##'
-##' See also \code{\link{bestPartialA}}
-##' @title Find best threshold parameters for regulatory function.
+##'
+##' Wrapping \code{\link{bestPartialA}}, this doesn't hold any values constant.
+##'
 ##' @param ts.multi A list of timeseries.
 ##' @param net A network.
 ##' @param g A gene.
@@ -62,21 +66,12 @@ bestA <- function(ts.multi, net, g, i){
   return(bestPartialA(ts.multi, net, g, i, 1:k))
 }
 
-## bestAllA <- function(ts.multi, net, g){
-##   ## For a given gene, this computes the best a for each of its possible
-##   ## functions.
-##   A <- lapply(1:length(net$interaction[g][[1]]),
-##               function(i){
-##                 bestA(ts.multi, net, g, i)
-##               })
-##   return(A)
-## }
-
-
-##' des
+##' Find optimal probabilities for a set of regulatory functions.
 ##'
-##' det
-##' @title Find best probabilities for the regulatory functions for single gene.
+##'
+##' Using standard optimization \code{solnp}, this tries to find the
+##' probabilities for a single gene which minimizes the loss function.
+##'
 ##' @param ts.multi List of timeseries.
 ##' @param net A network.
 ##' @param g A gene.
@@ -107,9 +102,12 @@ bestC <- function(ts.multi, net, g){
 }
 
 
-##' des
+##' Find best probabilities. Prune those with small values.
 ##'
-##' det
+##'
+##' Using \code{\link{bestC}}, this finds the best probabilities. Afterwards, it
+##' prunes all functions whose probabilities is below a user-defined threshold.
+##'
 ##' @title Optimize probabilities for regulatory functions to be used.
 ##' @param ts.multi A list of timeseries.
 ##' @param net A network.
@@ -143,11 +141,13 @@ optimizeC <- function(ts.multi, net, g, prune=TRUE, thresh=0.01){
   return(net)
 }
 
-##' des
+##' Find the best regulatory input given the current regulatory function.
+##'
 ##'
 ##' Try to add regulators to the "most recent" regulatory set. Stop only when
 ##' there is no improvement any longer.
 ##' The choice of the gene to add is done greedily.
+##'
 ##' @title Greedily add new gene to regulatory function.
 ##' @param ts.multi A list of timeseries.
 ##' @param net A network.
@@ -207,9 +207,13 @@ innovateGene <- function(ts.multi, net, g,
   return(net)
 }
 
-##' des
+##' Greedily add regulatory functions to explain a gene's time progression.
 ##'
-##' det
+##'
+##' Genes are added until no more improvement is made or the upper limit is
+##' reached. In biological networks, a common assumption for the an upper bound
+##' on the number of inputs is in the range 3-5.
+##'
 ##' @title Add new genes to regulatory set until no more improvement is made.
 ##' @param ts.multi A list of timeseries.
 ##' @param net A network.
@@ -250,7 +254,7 @@ innovateGeneUntilSaturated <- function(ts.multi, net, g,
                          prune=FALSE)
     a.current <- tail(net.new$interactions[[g]], 1)[[1]]$a
     loss.new <- LossGeneTotal(ts.multi, net.new, g)
-    if ((loss.new > 0) & verbal){
+    if (verbal){
       cat("Current loss:", loss.new, "Old loss:", loss.old,
           "Current a:", a.current, "\n")
       cat("Current loss:", loss.new, "\n")
@@ -260,9 +264,13 @@ innovateGeneUntilSaturated <- function(ts.multi, net, g,
   return(net.new)
 }
 
-##' des
+##' Add a new regulatory function complete with inputs.
 ##'
-##' det
+##'
+##' This starts by taking some of the probability off the previous inferred
+##' function and tries to find optimal genes and probabilities for the new
+##' function.
+##'
 ##' @title Add regulatory function to a gene.
 ##' @param ts.multi A list of timeseries.
 ##' @param net A network.

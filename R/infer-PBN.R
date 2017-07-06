@@ -1,8 +1,11 @@
-##' Infer a Threshold PBN from a list of timeseries. Makes use of
-##'   \code{\link{innovateGeneUntilSaturated}}
+##' Infer a Threshold PBN from a list of timeseries.
 ##'
-##' det
-##' @title inferPBN
+##'
+##' This is a wrapper for the whole inference procedure and makes use of
+##' \code{\link{innovateGeneUntilSaturated}}.
+##' For every gene it infers regulatory functions until the upper bound is
+##' reached or there is no more improvement from adding more functions.
+##'
 ##' @param ts.multi A list of timeseries.
 ##' @param p The noise probability to use for the network.
 ##' @param n.regulator.max
@@ -60,8 +63,9 @@ inferPBN <- function(ts.multi,
         improvement.temp <- rep(0, n)
         for (g in (1:n)[improvement > 0]){
           if (length(net.inferred$interactions[[g]])
-              < length(temp[[g]]$interactions[[g]])):
-               improvement.temp[g] <- 1
+              < length(temp[[g]]$interactions[[g]])){
+            improvement.temp[g] <- 1
+          }
           net.inferred$interactions[[g]] <- temp[[g]]$interactions[[g]]
         }
         improvement <- improvement.temp
