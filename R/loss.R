@@ -51,12 +51,12 @@ LossPriorGene <- function(net, g){
   ## of the parent functions are used.
   if(!is.null(interactions[[1]]$a)){
     A <- sapply(interactions, function(x) sum(x$a != 0))
-    size.cost <- sum(log(A))
+    size.cost <- sum(log(1+A))
     choice.cost <- sum(log(choose(n, A)))
     function.cost <- sum(log(2^A))
   } else {
     parent.size <- sapply(interactions, function(x) length(x$input))
-    size.cost <- sum(log(parent.size))
+    size.cost <- sum(log(1+parent.size))
     choice.cost <- sum(log(choose(n, parent.size)))
     function.cost <- sum(log(2 ^ (2 ^ parent.size)))
   }

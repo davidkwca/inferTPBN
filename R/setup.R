@@ -1,3 +1,26 @@
+require(BoolNet)
+require(entropy)
+require(foreach)
+require(doParallel)
+require(igraph)
+require(compositions)
+require(Rsolnp)
+##' Helper function for testing network inference.
+##'
+##' Automatically generate a network, generate timeseries data from it, and do inference.
+##' @title
+##' @param n
+##' @param k
+##' @param p
+##' @param num.timepoints
+##' @param num.experiments
+##' @param topology
+##' @param gamma
+##' @param n.cores
+##' @param seed
+##' @param partial
+##' @param verbal
+##' @return
 FullRun <- function(n=20, k=5, p=0.01,
                     num.timepoints=10, num.experiments=50,
                     topology="homogeneous", gamma=2.5,
@@ -7,7 +30,7 @@ FullRun <- function(n=20, k=5, p=0.01,
 
   dir <- sprintf("points-%d_experiments-%d_topology-%s/",
                  num.timepoints, num.experiments, topology)
-  dir.create(dir)
+  dir.create(dir, showWarnings=FALSE)
   file.name <-sprintf("%sn-%d_k-%d_p-%.2f", dir, n, k, p)
   if(file.exists(file.name)){
     cat(sprintf("File %s already exists!", file.name), "\n")
@@ -23,7 +46,8 @@ FullRun <- function(n=20, k=5, p=0.01,
     inferred.list <- inferPBN(ts.multi,
                               n.cores=n.cores,
                               seed=seed,
-                              partial=partial)
+                              partial=partial,
+                              verbal=verbal)
 
     save(setup.list, inferred.list, n.cores,
          file=file.name)

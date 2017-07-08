@@ -37,6 +37,7 @@ inferPBN <- function(ts.multi,
   }
 
   net.inferred <- transformNetwork(net.empty)
+  ## print(net.inferred$interactions[[1]])
 
   registerDoParallel(n.cores)
   time.complete <-
@@ -47,7 +48,7 @@ inferPBN <- function(ts.multi,
       }
       improvement <- rep(0, n)
       for (g in 1:n){
-        if (temp[[g]]$interactions[[g]]$input != 0){
+        if (temp[[g]]$interactions[[g]][[1]]$input != 0){
           improvement[g] <- 1
         }
         net.inferred$interactions[[g]] <- temp[[g]]$interactions[[g]]
@@ -56,17 +57,20 @@ inferPBN <- function(ts.multi,
       for (L in 1:L.max){
         ## New regulatory functions are inferred only where improvements have
         ## been made on the previous round
-        temp <- foreach(g = (1:n)[improvement > 0]) %dopar% {
+        improved <- (1:n)[improvement > 0]
+        temp <- foreach(g = improved) %dopar% {
           innovateGeneFunction(ts.multi, net.inferred, g,
                                partial=FALSE, verbal=verbal)
         }
         improvement.temp <- rep(0, n)
-        for (g in (1:n)[improvement > 0]){
+        for (j in 1:length(improved)){
+          g <- improved[j]
+          print(g)
           if (length(net.inferred$interactions[[g]])
-              < length(temp[[g]]$interactions[[g]])){
+              < length(temp[[j]]$interactions[[g]])){
             improvement.temp[g] <- 1
           }
-          net.inferred$interactions[[g]] <- temp[[g]]$interactions[[g]]
+          net.inferred$interactions[[g]] <- temp[[j]]$interactions[[g]]
         }
         improvement <- improvement.temp
       }

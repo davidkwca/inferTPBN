@@ -97,7 +97,9 @@ bestC <- function(ts.multi, net, g){
   n.regu <- length(net.new$interactions[[g]])
   c <- runif(n.regu, 0, 1)
   c <- c / sum(c)
-  c.best <- solnp(c, objective, equal, 1, LB=rep(0, n.regu), UB=rep(1, n.regu))
+  ## Don't show all the optimization outputs...
+  capture.output(c.best
+                 <- solnp(c, objective, equal, 1, LB=rep(0, n.regu), UB=rep(1, n.regu)))
   return(c.best)
 }
 
@@ -117,7 +119,7 @@ bestC <- function(ts.multi, net, g){
 ##' @param thresh The threshold below which to prune functions if prune
 ##'   is TRUE.
 ##' @return A network whose probabilities have been optimized.
-optimizeC <- function(ts.multi, net, g, prune=TRUE, thresh=0.01){
+optimizeC <- function(ts.multi, net, g, prune=TRUE, thresh=0.1){
   ## If there is only a single regulatory set, no optimization needs to be done.
   if (length(net$interactions[g][[1]]) > 1){
     c.net <- bestC(ts.multi, net, g)$pars
@@ -243,9 +245,6 @@ innovateGeneUntilSaturated <- function(ts.multi, net, g,
   }
   k <- 1
   while ((k <= k.max) && (loss.new < loss.old - thresh)){
-    if(verbal){
-      cat("k =", k, "\n")
-    }
     net.old <- net.new
     loss.old <- LossGeneTotal(ts.multi, net.old, g)
 
@@ -254,11 +253,6 @@ innovateGeneUntilSaturated <- function(ts.multi, net, g,
                          prune=FALSE)
     a.current <- tail(net.new$interactions[[g]], 1)[[1]]$a
     loss.new <- LossGeneTotal(ts.multi, net.new, g)
-    if (verbal){
-      cat("Current loss:", loss.new, "Old loss:", loss.old,
-          "Current a:", a.current, "\n")
-      cat("Current loss:", loss.new, "\n")
-    }
     k <- k + 1
   }
   return(net.new)
