@@ -65,7 +65,6 @@ inferPBN <- function(ts.multi,
         improvement.temp <- rep(0, n)
         for (j in 1:length(improved)){
           g <- improved[j]
-          print(g)
           if (length(net.inferred$interactions[[g]])
               < length(temp[[j]]$interactions[[g]])){
             improvement.temp[g] <- 1

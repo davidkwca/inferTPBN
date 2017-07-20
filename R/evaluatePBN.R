@@ -1,178 +1,3 @@
-plotStats <- function(n=c(5, 10, 25, 50, 100), k=c(5), p=c(0.01),
-                     num.timepoints=c(10), num.experiments=c(1),
-                     topology="homogeneous"){
-  N <- length(n)
-  K <- length(k)
-  P <- length(p)
-  T <- length(num.timepoints)
-  E <- length(num.experiments)
-  R <- length(topology)
-
-
-  time.complete <- array(dim=c(N, K, P, T, E, R))
-  time.bestfit <- array(dim=c(N, K, P, T, E, R))
-  loss.complete <- array(dim=c(N, K, P, T, E, R))
-  loss.bestfit <- array(dim=c(N, K, P, T, E, R))
-  loss.true <- array(dim=c(N, K, P, T, E, R))
-  for (i in 1:N){
-    for (j in 1:K){
-      for (l in 1:P){
-        for (t in 1:T){
-          for (e in 1:E){
-            for (r in 1:R){
-              dir <- sprintf("points-%d_experiments-%d_topology-%s/",
-                             num.timepoints[t], num.experiments[e], topology[r])
-              file.name <- sprintf("%sn-%d_k-%d_p-%.2f", dir, n[i], k[j], p[l])
-              load(file=file.name)
-              time.complete[i, j, l, t, e, r] <- inferred.list$time.complete['elapsed']
-              loss.complete[i, j, l, t, e, r] <-
-                Loss(setup.list$ts.multi,
-                     inferred.list$net.inferred,
-                     prior=FALSE)
-              loss.true[i, j, l, t, e, r] <-
-                Loss(setup.list$ts.multi,
-                     setup.list$net.true,
-                     prior=FALSE)
-            }
-          }
-        }
-      }
-    }
-  }
-  ## By SIZE.
-  if (N > 1){
-    times <- time.complete[, 1, 1, 1, 1, 1]
-    png(filename=sprintf("times_by_size.png"))
-    plot(x=n, y=times,
-         xlab="network size",
-         ylab="inference time")
-    title("Time")
-    dev.off()
-
-    loss.inferred <- loss.complete[, 1, 1, 1, 1, 1]
-    loss.true <- loss.true[, 1, 1, 1, 1, 1]
-    ## loss.bestfit <- loss.bestfit[, 1, 1, 1, 1, 1]
-
-    yLim <- c(0, max(c(loss.true, loss.inferred, loss.bestfit)))
-    png(filename=sprintf("losses_by_size.png"))
-    plot(x=n, y=loss.true, col="red", ylim=yLim, type="l",
-         xlab="network size",
-         ylab="loss")
-    lines(x=n, y=loss.inferred, col="blue", type="l")
-    legend("topleft", c("true", "inferred", "bestfit"),
-           lty=1, col=c("red", "blue", "green"))
-    title("Losses")
-    dev.off()
-    png(filename=sprintf("relative_loss_by_size.png"))
-    plot(x=n, y=(loss.inferred-loss.true)/loss.true)
-    dev.off()
-  }
-  ## By EXPERIMENTS.
-  if (E > 1){
-    times <- time.complete[1, 1, 1, 1, , 1]
-    png(filename=sprintf("times_by_experiments.png"))
-    plot(x=num.experiments, y=times,
-         xlab="num experiments",
-         ylab="inference time")
-    title("Time")
-    dev.off()
-
-    loss.true <- loss.true[1, 1, 1, 1, , 1]
-    loss.inferred <- loss.complete[1, 1, 1, 1, , 1]
-    loss.bestfit <- loss.bestfit[1, 1, 1, 1, , 1]
-    yLim <- c(0, max(c(loss.true, loss.inferred, loss.bestfit)))
-
-    png(filename=sprintf("losses_by_experiments.png"))
-    plot(x=num.experiments, y=loss.true, col="red", ylim=yLim, type="l",
-         xlab="num experiments",
-         ylab="loss")
-    lines(x=num.experiments, y=loss.inferred, col="blue", type="l")
-    lines(x=num.experiments, y=loss.bestfit, col="green", type="l")
-    legend("topleft", c("true", "inferred", "bestfit"),
-           lty=1, col=c("red", "blue", "green"))
-    title("Losses")
-    dev.off()
-
-    png(filename=sprintf("relative_loss_by_experiments.png"))
-    plot(x=num.experiments, y=(loss.inferred-loss.true)/loss.true)
-    dev.off()
-  }
-}
-
-EvaluateStatisticsGene <- function(net.true, net, g){
-  returns <- list()
-  n <- length(net.true$genes)
-  interactions.true <- net.true$interactions[[g]]
-  interactions <- net$interactions[[g]]
-  inputs.true <- lapply(interactions.true, function(x) x$input)
-  inputs <- lapply(interactions, function(x) x$input)
-  inputs.true.flat <- unlist(inputs.true)
-  inputs.flat <- unlist(inputs)
-
-  noninputs.true.flat <- setdiff(1:10, inputs.true.flat)
-  noninputs.flat <- setdiff(1:10, inputs.flat)
-
-  num.interaction.true <- length(unique(inputs.true.flat)) # TP + FN
-  num.interaction.found <- length(unique(inputs.flat)) # TP + FP
-  num.interaction.intersection <- length(unique(intersect(inputs.true.flat, inputs.flat)))
-
-  num.noninteraction.true <- length(unique(noninputs.true.flat))
-  num.noninteraction.found <- length(unique(noninputs.flat))
-  num.noninteraction.intersection <-
-    length(unique(intersect(noninputs.true.flat, noninputs.flat)))
-
-  recall <- num.interaction.intersection / num.interaction.true
-  precision <- num.interaction.intersection / num.interaction.found
-
-  returns$num.interaction.true <- num.interaction.true
-  returns$num.interaction.found <- num.interaction.found
-  returns$num.interaction.intersection <- num.interaction.intersection
-  returns$num.noninteraction.true <- num.noninteraction.true
-  returns$num.noninteraction.found <- num.noninteraction.found
-  returns$num.noninteraction.intersection <- num.noninteraction.intersection
-
-  returns$recall <- recall
-  returns$precision <- precision
-  if(all(precision == 0, recall == 0)){
-    returns$F <- 0
-  } else {
-    returns$F <- 2 * (precision * recall)/(precision + recall)
-  }
-  return(returns)
-}
-
-EvaluateStatistics <- function(net.true, net){
-  n <- length(net$genes)
-
-  interaction.true.total <- 0
-  interaction.found.total <- 0
-  interaction.intersection.total <- 0
-
-  noninteraction.true.total <- 0
-  noninteraction.found.total <- 0
-  noninteraction.intersection.total <- 0
-
-
-  F.avg <- 0
-  for (g in 1:n){
-    stats <- EvaluateStatisticsGene(net.true, net, g)
-    interaction.true.total <- interaction.true.total + stats$num.interaction.true
-    interaction.found.total <- interaction.found.total + stats$num.interaction.found
-    interaction.intersection.total <- interaction.intersection.total + stats$num.interaction.intersection
-
-    noninteraction.true.total <- noninteraction.true.total + stats$num.noninteraction.true
-    noninteraction.found.total <- noninteraction.found.total + stats$num.noninteraction.found
-    noninteraction.intersection.total <- noninteraction.intersection.total + stats$num.noninteraction.intersection
-  }
-
-  recall.avg <- interaction.intersection.total / interaction.true.total
-  precision.avg <- interaction.intersection.total / interaction.found.total
-  F.avg <- 2 * (precision.avg * recall.avg)/(precision.avg + recall.avg)
-  str.acc <- (interaction.intersection.total + noninteraction.intersection.total) / n^2
-
-  return(list(recall=recall.avg, precision=precision.avg, F=F.avg, str.acc=str.acc))
-}
-
 PBNtoGraph <- function(net, fname=""){
   n <- length(net$genes)
   edges <- c()
@@ -199,4 +24,85 @@ PBNtoGraph <- function(net, fname=""){
     dev.off()
   }
   return(G)
+}
+
+FscoreNet <- function(net.true, net.inferred){
+  n <- length(net.true$genes)
+
+  tp <- 0
+  predicted <- 0
+  relevant <- 0
+
+  for (g in 1:n){
+    inter <- net.inferred$interactions[[g]]
+    input <- c()
+    for (j in 1:length(inter)){
+      input <- c(input, inter[[j]]$input)
+    }
+    input.true <- c()
+    for (j in 1:length(net.true$interactions[[g]])){
+      input.true <- c(input.true, net.true$interactions[[g]][[j]]$input)
+    }
+    predicted <- predicted + length(unique(input))
+    relevant <- relevant + length(unique(input.true))
+    tp <- tp + length(unique(intersect(input, input.true)))
+  }
+  precision <- tp / predicted
+  recall <- tp / relevant
+  f <- 2 * (precision * recall) / (precision + recall)
+  return(list(precision=precision, recall=recall, f=f))
+}
+
+loadNetStats <- function(n, k, e=20, t=10, topology='homogeneous'){
+  dir <- sprintf("points-%d_experiments-%d_topology-%s/",
+                 t, e, topology)
+  file.name <- sprintf("%sn-%d_k-%d_p-%.2f", dir, n, k, 0.01)
+  load(file=file.name)
+
+  net.true <- setup.list$net.true
+  ts.multi <- setup.list$ts.multi
+
+  net.inferred <- inferred.list$net.inferred
+  time.inferred <- inferred.list$time.complete
+
+  loss.true <- Loss(ts.multi, net.true, prior=FALSE)
+  loss.inferred <- Loss(ts.multi, net.inferred, prior=FALSE)
+
+  print(FscoreNet(net.true, net.inferred))
+
+  return(list(loss.true=loss.true,
+              loss.inferred=loss.inferred,
+              time.inferred=time.inferred))
+}
+
+plotStats <- function(ns, k, e=20, t=10, topology='homogeneous'){
+  losses.true <- rep(0, length(ns))
+  losses.inferred <- rep(0, length(ns))
+  times <- rep(0, length(ns))
+  for (i in 1:length(ns)){
+    n <- ns[i]
+    l <- loadNetStats(n, k, e, t, topology)
+    losses.true[i] <- l$loss.true
+    losses.inferred[i] <- l$loss.inferred
+    times[i] <- l$time.inferred[3]
+  }
+  yLim <- c(min(losses.true), max(losses.inferred))
+  png(sprintf("plots/losses-k-%d_e-%d_topology-%s.png", k, e, topology))
+  plot(x=ns, y=losses.true, col="red", type="l", ylim=yLim,
+       xlab="network size",
+       ylab="loss")
+  lines(x=ns, y=losses.inferred, col="blue", type="l")
+  if (e == 20){
+    legend("topleft", legend=c("True", "Inferred"),
+       col=c("red", "blue"), lty=c(1, 1), cex=1.7)
+  }
+  dev.off()
+
+  png(sprintf("plots/relative-k-%d_e-%d_topology-%s.png", k, e, topology))
+  plot(x=ns, y=(losses.inferred-losses.true)/losses.true)
+  dev.off()
+
+  png(sprintf("plots/times-k-%d_e-%d_topology-%s.png", k, e, topology))
+  plot(x=ns, y=times, log="xy", type="l", col="black")
+  dev.off()
 }
