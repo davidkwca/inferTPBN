@@ -154,11 +154,6 @@
 
    A high-level overview of the algorithm is given in...
 * Results
-  Plots for \(k = 5\) homogeneous (50 experiments) + (20 experiments)
-  Plots for \(k = 5\) power law (50 experiments) + (20 experiments)
-  Plots with misspecified noise level...
-  Plots for time
-
   All experiments are performed with a cap of \(3\) inferred inputs per regulatory function, and a maximum of \(3\) inferred regulatory functions per gene.
 
   To evaluate the networks, we compare the inferred network to the true network both in terms of the loss as well as the F-score in finding the correct edges of the true network.
@@ -185,23 +180,22 @@
   #+END_EXPORT
 
   Similar, in \Cref{fig:losses2} we find similar results for scale-free networks with in-degrees distributed according to \(d^{-\gamma}\) with \(\gamma = 2.5\).
-  Note that while both true and inferred networks do worse here, the inferred network doesn't do any worse relative to the true network despite the fact that our constraint on using only few inputs should hurt us even more in this case.
 
   #+BEGIN_EXPORT latex
   \begin{figure}[H]
     \centering
-    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-k-5_e-20_topology-homogeneous.png}}%
-    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-k-5_e-50_topology-homogeneous.png}}%
-    \caption{F-score of the inferred network for sizes \(n=5, 10 , 20, 50\) using homogeneous topology. Left: 20 timeseries à 10 points. Right: 50 timeseries à 10 points.}\\%
+    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-homogeneous.png}}%
+    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-scale_free.png}}%
+    \caption{F-score of the inferred network for sizes \(n=5, 10 , 20, 50\). Left: Homogeneous topology. Right: Scalefree topology.}\\%
     \label{fig:f1}
-    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-k-5_e-20_topology-scale_free.png}}%
-    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-k-5_e-50_topology-scale_free.png}}%
-    \caption{F-score of the inferred network for sizes \(n=5, 10 , 20, 50\) using scalefree topology. Left: 20 timeseries à 10 points. Right: 50 timeseries à 10 points.}\\%
-    \label{fig:f2}
   \end{figure}
   #+END_EXPORT
 
-  Further, in \Cref{fig:times}, we see that for homogeneous topology on the network, the runtime scales roughly quadratically with the size of the networks. This is exactly what we would have expected simply looking at the algorithm above.
+  Note that while both true and inferred networks do worse here, the inferred network doesn't do any worse relative to the true network despite the fact that our constraint on using only few inputs should hurt us even more in this case.
+
+  In \Cref{fig:f1} the F-scores for networks of different size and using different number of experiments are shown.
+
+  Further, in \Cref{fig:times}, we see that for homogeneous topology on the network, the runtime scales roughly quadratically with the size of the networks. This is exactly what we would have expected simply from the description of the algorithm above.
 
   Further comparing the two plots it appears like the time taken for the inference is roughly linear in the number of parallel time series we are running. This also isn't surprising.
 
@@ -217,9 +211,11 @@
   \end{figure}
   #+END_EXPORT
 * Further Ideas
-  From a coding perspective, instead of computing \(P(D | N)\) by summing over probabilities of networks predicting the correct outcome, one could also use \(H(\left\{ c_j^{(l)} : l = 1,...,L \right\})\) bits to encode which network is the "correct one" at every time step and try to find that model which requires the least number of bits to encode the outcome.
+  From a coding perspective, instead of computing \(P(D | N)\) by summing over probabilities of networks predicting the correct outcome, one could also use \(H\left(\left\{ c_j^{(l)} : l = 1,...,L \right\}\right)\) bits to encode which network is the "correct one" at every time step and try to find that model which requires the least number of bits to encode the outcome.
 
   Furthermore, since the network inference process quickly becomes expensive the more data is used, it might be a good idea to use subsampling methods.
+
+  Another way to reduce the computational load here would be to consider only those genes which show a high level of (lagged) mutual information with the target genes.
 * Related research
   Full Bayesian Inference for BNs have been made use of only quite recently cite:han2014full.
   Previously, the MDL principle has been used for inferring gene regulatory networks in cite:tabus2001use,tabus2003normalized,zhao2006inferring,dougherty2008inference,chaitankar2009gene,chaitankar2010novel. However, these approaches were always applied to finding a single model like a BNp rather than a combination of BNs as in a PBN.
