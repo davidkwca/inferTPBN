@@ -1,0 +1,6 @@
+* inferTPBN -- Inferring Threshold Probabilistic Boolean Networks
+  Generate synthetic Threshold Probabilistic Boolean networks and timeseries generated from these networks.
+
+  This data can then be used to infer the best network given said data.
+
+  Everything is (should be) compatible with any network generated via the BoolNet package.
