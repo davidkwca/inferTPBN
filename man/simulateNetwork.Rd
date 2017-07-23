@@ -2,7 +2,7 @@
 % Please edit documentation in R/create-network.R
 \name{simulateNetwork}
 \alias{simulateNetwork}
-\title{Generate a number of synthetic timeseries from a network.}
+\title{Simulate a threshold PBN.}
 \usage{
 simulateNetwork(net, Tmax, Emax, start = "random", start.values,
   fix.genes = -1, fix.values = -1)
@@ -24,4 +24,12 @@ simulateNetwork(net, Tmax, Emax, start = "random", start.values,
 }
 \value{
 A list of timeseries.
+}
+\description{
+From a given starting configurations, simulate the network Emax times for
+Tmax steps in every single timeseries.
+}
+\examples{
+net <- createNetwork(inputProbabilities=1, 5, 2, "homogeneous")
+ts.multi <- simulateNetwork(net, 10, 50) # Creates 50 timeseries à 10 points
 }

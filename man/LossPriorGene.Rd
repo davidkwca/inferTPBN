@@ -2,7 +2,7 @@
 % Please edit documentation in R/loss.R
 \name{LossPriorGene}
 \alias{LossPriorGene}
-\title{Penalty for single gene's regulatory set's complexity.}
+\title{Compute the prior penalty for the network.}
 \usage{
 LossPriorGene(net, g)
 }
@@ -13,4 +13,14 @@ LossPriorGene(net, g)
 }
 \value{
 A float.
+}
+\description{
+Can take either a BoolNet network or a TPBN and computes the penalty on the
+network for its complexity.
+The penalty is given by having to encode the number of inputs, the set of
+actual inputs, and the Boolean function on these inputs.
+}
+\examples{
+net <- createNetwork(inputProbabilities=1, 5, 2, "homogeneous")
+loss <- LossPriorGene(net, 1)
 }

@@ -30,8 +30,13 @@ excessive computation, this should be set to a small constant. Defaults to
 A network.
 }
 \description{
-des
+Greedily add regulatory functions to explain a gene's time progression.
 }
 \details{
-det
+Genes are added until no more improvement is made or the upper limit is
+reached. In biological networks, a common assumption for the an upper bound
+on the number of inputs is in the range 3-5.
+}
+\seealso{
+\code{\link{innovateGene}} \code{\link{innovateGeneFunction}}
 }

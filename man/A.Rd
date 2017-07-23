@@ -2,7 +2,7 @@
 % Please edit documentation in R/create-network.R
 \name{A}
 \alias{A}
-\title{Threshold parameters for genes.}
+\title{Add threshold parameters to network.}
 \usage{
 A(net)
 }
@@ -13,9 +13,6 @@ A(net)
 The network with associated parameters.
 }
 \description{
-Associates with each regulatory set of genes a vector
-  determining whether said genes have a positive or negative effect.
-}
-\examples{
-\dontrun{A(net)}
+Threshold parameters determine whether an input will have a positive or
+negative relationship with the target genes.
 }

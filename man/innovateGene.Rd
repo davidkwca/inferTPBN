@@ -23,10 +23,13 @@ Defaults to TRUE.}
 A network.
 }
 \description{
-des
+Find the best regulatory input given the current regulatory function.
 }
 \details{
 Try to add regulators to the "most recent" regulatory set. Stop only when
 there is no improvement any longer.
 The choice of the gene to add is done greedily.
+}
+\seealso{
+\code{\link{innovateGeneUntilSaturated}} \code{\link{innovateGeneFunction}}
 }

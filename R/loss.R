@@ -5,8 +5,13 @@
 ##'
 ##' @param ts.multi List of timeseries.
 ##' @param net A PBN.
-##' @param prior whether or not the prior should be included. Defaults to TRUE.
+##' @param prior If TRUE, loss for the prior is included. Defaults to TRUE.
 ##' @return A float.
+##' @seealso \code{\link{LossGeneTotal}} \code{\link{LossGeneTimeseries}} \code{\link{LossPriorGene}}
+##' @examples
+##' net <- createNetwork(inputProbabilities=1, 5, 2, "homogeneous")
+##' ts.multi <- simulateNetwork(net, 10, 50) # Creates 50 timeseries à 10 points
+##' loss <- Loss(ts.multi, net)
 Loss <- function(ts.multi, net, prior=TRUE){
   ## The desired loss function we have here.
   loss <- 0
@@ -42,6 +47,9 @@ Loss <- function(ts.multi, net, prior=TRUE){
 ##' @param net A network, either threshold PBN or BoolNet net.
 ##' @param g The gene to be penalized.
 ##' @return A float.
+##' @examples
+##' net <- createNetwork(inputProbabilities=1, 5, 2, "homogeneous")
+##' loss <- LossPriorGene(net, 1)
 LossPriorGene <- function(net, g){
   n <- length(net$genes)
   interactions <- net$interactions[[g]]
@@ -73,6 +81,10 @@ LossPriorGene <- function(net, g){
 ##' @param net A network.
 ##' @param g A gene.
 ##' @return A float.
+##' @examples
+##' net <- createNetwork(inputProbabilities=1, 5, 2, "homogeneous")
+##' ts.multi <- simulateNetwork(net, 10, 50) # Creates 50 timeseries à 10 points
+##' loss <- LossGeneTimeseries(ts.multi, net, 1)
 LossGeneTimeseries <- function(ts.multi, net, g){
   losses <- sapply(ts.multi, function(ts) LossGene(ts, net, g))
   return(sum(losses))
@@ -89,6 +101,10 @@ LossGeneTimeseries <- function(ts.multi, net, g){
 ##' @param net A network.
 ##' @param g A gene.
 ##' @return A float.
+##' @examples
+##' net <- createNetwork(inputProbabilities=1, 5, 2, "homogeneous")
+##' ts.multi <- simulateNetwork(net, 10, 50) # Creates 50 timeseries à 10 points
+##' loss <- LossGeneTotal(ts.multi, net, 1)
 LossGeneTotal <- function(ts.multi, net, g){
   return(LossGeneTimeseries(ts.multi, net, g) + LossPriorGene(net, g))
 }

@@ -33,8 +33,13 @@ generated at once.}
 A network.
 }
 \description{
-des
+Add a new regulatory function complete with inputs.
 }
 \details{
-det
+This starts by taking some of the probability off the previous inferred
+function and tries to find optimal genes and probabilities for the new
+function.
+}
+\seealso{
+\code{\link{innovateGene}} \code{\link{innovateGeneUntilSaturated}}
 }

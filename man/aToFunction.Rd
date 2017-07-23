@@ -2,7 +2,7 @@
 % Please edit documentation in R/create-network.R
 \name{aToFunction}
 \alias{aToFunction}
-\title{Boolean functions from threshold parameters.}
+\title{Turn threshold parameters into Boolean functions.}
 \usage{
 aToFunction(net)
 }
@@ -12,6 +12,12 @@ aToFunction(net)
 \value{
 A Network with logic functions associated.
 }
+\description{
+Take a network with a set of threshold parameters and compute the correct
+Boolean functions belonging to these parameters.
+}
 \examples{
-\dontrun{aToFunction(net)}
+net <- generateRandomNKNetwork(5, 2, "homogeneous")
+net <- A(net)
+net <- aToFunction(net)
 }

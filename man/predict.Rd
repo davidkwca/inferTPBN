@@ -2,7 +2,7 @@
 % Please edit documentation in R/create-network.R
 \name{predict}
 \alias{predict}
-\title{Predict value of gene at next step given current values.}
+\title{Generate gene's next state given current state.}
 \usage{
 predict(net, g, state)
 }
@@ -14,8 +14,8 @@ predict(net, g, state)
 \item{state}{The current state of the netwrok.}
 }
 \value{
-The predicted value of the gene.
+The simulated value of the gene.
 }
 \description{
-Used only for \code{\link{simulateNetwork}}.
+Generate gene's next state given current state.
 }

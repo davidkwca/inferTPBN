@@ -30,6 +30,7 @@ FscoreNet <- function(net.true, net.inferred){
   n <- length(net.true$genes)
 
   tp <- 0
+  fp <- 0
   predicted <- 0
   relevant <- 0
 
@@ -60,7 +61,9 @@ loadNetStats <- function(n, k, e=20, t=10, topology='homogeneous'){
   load(file=file.name)
 
   net.true <- setup.list$net.true
-  ts.multi <- setup.list$ts.multi
+  ## ts.multi <- setup.list$ts.multi
+
+  ts.multi <- simulateNetwork(net.true, 10, 50)
 
   net.inferred <- inferred.list$net.inferred
   time.inferred <- inferred.list$time.complete
@@ -68,16 +71,18 @@ loadNetStats <- function(n, k, e=20, t=10, topology='homogeneous'){
   loss.true <- Loss(ts.multi, net.true, prior=FALSE)
   loss.inferred <- Loss(ts.multi, net.inferred, prior=FALSE)
 
-  print(FscoreNet(net.true, net.inferred))
+  f=FscoreNet(net.true, net.inferred)
 
   return(list(loss.true=loss.true,
               loss.inferred=loss.inferred,
-              time.inferred=time.inferred))
+              time.inferred=time.inferred,
+              f=f))
 }
 
 plotStats <- function(ns, k, e=20, t=10, topology='homogeneous'){
   losses.true <- rep(0, length(ns))
   losses.inferred <- rep(0, length(ns))
+  fs <- rep(0, length(ns))
   times <- rep(0, length(ns))
   for (i in 1:length(ns)){
     n <- ns[i]
@@ -85,6 +90,7 @@ plotStats <- function(ns, k, e=20, t=10, topology='homogeneous'){
     losses.true[i] <- l$loss.true
     losses.inferred[i] <- l$loss.inferred
     times[i] <- l$time.inferred[3]
+    fs[i] <- l$f
   }
   yLim <- c(min(losses.true), max(losses.inferred))
   png(sprintf("plots/losses-k-%d_e-%d_topology-%s.png", k, e, topology))
@@ -100,6 +106,10 @@ plotStats <- function(ns, k, e=20, t=10, topology='homogeneous'){
 
   png(sprintf("plots/relative-k-%d_e-%d_topology-%s.png", k, e, topology))
   plot(x=ns, y=(losses.inferred-losses.true)/losses.true)
+  dev.off()
+
+  png(sprintf("plots/fscore-k-%d_e-%d_topology-%s.png", k, e, topology))
+  plot(x=ns, y=fs)
   dev.off()
 
   png(sprintf("plots/times-k-%d_e-%d_topology-%s.png", k, e, topology))

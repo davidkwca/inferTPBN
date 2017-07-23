@@ -2,7 +2,7 @@
 % Please edit documentation in R/loss.R
 \name{Loss}
 \alias{Loss}
-\title{Loss function for time series.}
+\title{Compute loss of the network on the timeseries.}
 \usage{
 Loss(ts.multi, net, prior = TRUE)
 }
@@ -11,14 +11,20 @@ Loss(ts.multi, net, prior = TRUE)
 
 \item{net}{A PBN.}
 
-\item{prior}{whether or not the prior should be included. Defaults to TRUE.}
+\item{prior}{If TRUE, loss for the prior is included. Defaults to TRUE.}
 }
 \value{
 A float.
 }
 \description{
-Returns the loss of the network on the timeseries.
+This computes the complete loss of the network on a timeseries.
+If desired, the prior penalty can be included.
 }
-\details{
-Stuff.
+\examples{
+net <- createNetwork(inputProbabilities=1, 5, 2, "homogeneous")
+ts.multi <- simulateNetwork(net, 10, 50) # Creates 50 timeseries à 10 points
+loss <- Loss(ts.multi, net)
+}
+\seealso{
+\code{\link{LossGeneTotal}} \code{\link{LossGeneTimeseries}} \code{\link{LossPriorGene}}
 }

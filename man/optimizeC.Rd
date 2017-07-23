@@ -4,7 +4,7 @@
 \alias{optimizeC}
 \title{Optimize probabilities for regulatory functions to be used.}
 \usage{
-optimizeC(ts.multi, net, g, prune = TRUE, thresh = 0.01)
+optimizeC(ts.multi, net, g, prune = TRUE, thresh = 0.1)
 }
 \arguments{
 \item{ts.multi}{A list of timeseries.}
@@ -23,8 +23,12 @@ is TRUE.}
 A network whose probabilities have been optimized.
 }
 \description{
-des
+Find best probabilities. Prune those with small values.
 }
 \details{
-det
+Using \code{\link{bestC}}, this finds the best probabilities. Afterwards, it
+prunes all functions whose probabilities is below a user-defined threshold.
+}
+\seealso{
+\code{\link{bestC}}
 }

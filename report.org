@@ -143,7 +143,7 @@
    Then, given all the \(\left\{ G_k^{(l)}, A_k^{(l)} \right\}\), we find
    #+BEGIN_EXPORT latex
    \begin{align*}
-   c := \argmin_{c'} \left( - \log P(g | \left\{ f^{(i)} \right\}, c') - \log P\left(\left\{ f^{(i)} \right\}, c'\right) \right),
+   c := \argmin_{c'} \left( - \log P\left(g | \left\{ f^{(i)} \right\}, c'\right) - \log P\left(\left\{ f^{(i)} \right\}, c'\right) \right),
    \end{align*}
    #+END_EXPORT
    i.e. we find the best probabilities given all the other parameters.
@@ -161,13 +161,14 @@
 
   All experiments are performed with a cap of \(3\) inferred inputs per regulatory function, and a maximum of \(3\) inferred regulatory functions per gene.
 
-  In \Cref{fig:losses1} we show the losses for the true network (red) and the inferred network (blue) for sizes 5, 10, 20, 50 and 5 inputs per gene.
+  To evaluate the networks, we compare the inferred network to the true network both in terms of the loss as well as the F-score in finding the correct edges of the true network.
+
+  To compare the loss functions, we generate 50 new time series à 10 points and compute the total loss for both the inferred as well as the true network.
+
+  These losses are shown in \Cref{fig:losses1} for the true network (red) and the inferred network (blue) for sizes 5, 10, 20, 50 and 5 inputs per gene.
   The inferred network never does much (more than a factor 2, say,) worse than the true network. However, it is not clear if something similar can be said for much larger network sizes.
 
   This is all despite the case that we have put a hard constraint on the number of inputs per function which is lower than the true number.
-
-  Similar, in \Cref{fig:losses2} we find similar results for scale-free networks with in-degrees distributed according to \(d^{-\gamma}\) with \(\gamma = 2.5\).
-  Note that while both true and inferred networks do worse here, the inferred network doesn't do any worse relative to the true network despite the fact that our constraint on using only few inputs should hurt us even more in this case.
 
   #+BEGIN_EXPORT latex
   \begin{figure}[H]
@@ -180,6 +181,23 @@
     \subfloat{\includegraphics[scale=.40]{R/plots/losses-k-5_e-50_topology-scale_free.png}}%
     \caption{Losses for true (red) and inferred (blue) networks for \(n=5, 10, 20, 50\) genes using a scalefree topology with exponent 2.5. Left: 20 timeseries à 10 points. Right: 50 timeseries à 10 points.}
     \label{fig:losses2}
+  \end{figure}
+  #+END_EXPORT
+
+  Similar, in \Cref{fig:losses2} we find similar results for scale-free networks with in-degrees distributed according to \(d^{-\gamma}\) with \(\gamma = 2.5\).
+  Note that while both true and inferred networks do worse here, the inferred network doesn't do any worse relative to the true network despite the fact that our constraint on using only few inputs should hurt us even more in this case.
+
+  #+BEGIN_EXPORT latex
+  \begin{figure}[H]
+    \centering
+    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-k-5_e-20_topology-homogeneous.png}}%
+    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-k-5_e-50_topology-homogeneous.png}}%
+    \caption{F-score of the inferred network for sizes \(n=5, 10 , 20, 50\) using homogeneous topology. Left: 20 timeseries à 10 points. Right: 50 timeseries à 10 points.}\\%
+    \label{fig:f1}
+    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-k-5_e-20_topology-scale_free.png}}%
+    \subfloat{\includegraphics[scale=.40]{R/plots/fscore-k-5_e-50_topology-scale_free.png}}%
+    \caption{F-score of the inferred network for sizes \(n=5, 10 , 20, 50\) using scalefree topology. Left: 20 timeseries à 10 points. Right: 50 timeseries à 10 points.}\\%
+    \label{fig:f2}
   \end{figure}
   #+END_EXPORT
 
@@ -198,7 +216,6 @@
     \label{fig:times}
   \end{figure}
   #+END_EXPORT
-
 * Further Ideas
   From a coding perspective, instead of computing \(P(D | N)\) by summing over probabilities of networks predicting the correct outcome, one could also use \(H(\left\{ c_j^{(l)} : l = 1,...,L \right\})\) bits to encode which network is the "correct one" at every time step and try to find that model which requires the least number of bits to encode the outcome.
 

@@ -2,8 +2,7 @@
 % Please edit documentation in R/optimize-PBN.R
 \name{bestPartialA}
 \alias{bestPartialA}
-\title{Find the best threshold parameters for a single gene regulatory
-  function, holding everything else constant.}
+\title{Optimize a subset of threshold parameters.}
 \usage{
 bestPartialA(ts.multi, net, g, i, subset)
 }
@@ -22,8 +21,11 @@ bestPartialA(ts.multi, net, g, i, subset)
 A vector containing the best threshold parameters found.
 }
 \description{
-des
+While holding everything but the subset constant, optimize over this subset.
+This essentially just tries every possible combination for the values on
+this subset. However, zeroes are not allowed, as they have been found never
+to come up while making the inference much, much, slower.
 }
-\details{
-det
+\seealso{
+\code{\link{bestA}}
 }

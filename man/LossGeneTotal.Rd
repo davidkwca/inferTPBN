@@ -2,7 +2,7 @@
 % Please edit documentation in R/loss.R
 \name{LossGeneTotal}
 \alias{LossGeneTotal}
-\title{The total loss of the network on a single gene.}
+\title{Compute the total loss for a gene.}
 \usage{
 LossGeneTotal(ts.multi, net, g)
 }
@@ -15,4 +15,13 @@ LossGeneTotal(ts.multi, net, g)
 }
 \value{
 A float.
+}
+\description{
+This includes both the predictions on the timeseries as well as the penalty
+for its complexity.
+}
+\examples{
+net <- createNetwork(inputProbabilities=1, 5, 2, "homogeneous")
+ts.multi <- simulateNetwork(net, 10, 50) # Creates 50 timeseries à 10 points
+loss <- LossGeneTotal(ts.multi, net, 1)
 }

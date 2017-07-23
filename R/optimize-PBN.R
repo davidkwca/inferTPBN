@@ -12,6 +12,7 @@
 ##' @param i The index of the specific regulatory function for the optimization.
 ##' @param subset The subset of parameters over which to optimize.
 ##' @return A vector containing the best threshold parameters found.
+##' @seealso \code{\link{bestA}}
 bestPartialA <- function(ts.multi, net, g, i, subset){
   gene <- net$genes[g]
   parents <- net$interactions[gene][[1]][[i]]$input
@@ -60,6 +61,7 @@ bestPartialA <- function(ts.multi, net, g, i, subset){
 ##' @param g A gene.
 ##' @param i The index of the regulatory function.
 ##' @return A vector containing the best threshold parameters found.
+##' @seealso \code{\link{bestPartialA}}
 bestA <- function(ts.multi, net, g, i){
   parents <- net$interactions[[g]][[i]]$input
   k <- length(parents)
@@ -76,6 +78,7 @@ bestA <- function(ts.multi, net, g, i){
 ##' @param net A network.
 ##' @param g A gene.
 ##' @return A vector containing the probabilities optimizing the loss function.
+##' @seealso \code{\link{optimizeC}}
 bestC <- function(ts.multi, net, g){
   net.new <- net
 
@@ -119,6 +122,7 @@ bestC <- function(ts.multi, net, g){
 ##' @param thresh The threshold below which to prune functions if prune
 ##'   is TRUE.
 ##' @return A network whose probabilities have been optimized.
+##' @seealso \code{\link{bestC}}
 optimizeC <- function(ts.multi, net, g, prune=TRUE, thresh=0.1){
   ## If there is only a single regulatory set, no optimization needs to be done.
   if (length(net$interactions[g][[1]]) > 1){
@@ -159,6 +163,7 @@ optimizeC <- function(ts.multi, net, g, prune=TRUE, thresh=0.1){
 ##' @param verbal Whether messages to indicate progress should be shown.
 ##'   Defaults to TRUE.
 ##' @return A network.
+##' @seealso \code{\link{innovateGeneUntilSaturated}} \code{\link{innovateGeneFunction}}
 innovateGene <- function(ts.multi, net, g,
                          partial=FALSE, verbal=TRUE){
   n <- nrow(ts.multi[[1]])
@@ -229,6 +234,7 @@ innovateGene <- function(ts.multi, net, g,
 ##'   excessive computation, this should be set to a small constant. Defaults to
 ##'   3.
 ##' @return A network.
+##' @seealso \code{\link{innovateGene}} \code{\link{innovateGeneFunction}}
 innovateGeneUntilSaturated <- function(ts.multi, net, g,
                                        partial=FALSE, verbal=TRUE,
                                        thresh=0.1, k.max=3){
@@ -280,6 +286,7 @@ innovateGeneUntilSaturated <- function(ts.multi, net, g,
 ##' @param new.max An integer indicating how many new regulatory sets can be
 ##'   generated at once.
 ##' @return A network.
+##' @seealso \code{\link{innovateGene}} \code{\link{innovateGeneUntilSaturated}}
 innovateGeneFunction <- function(ts.multi, net, g,
                                  partial=FALSE, verbal=TRUE,
                                  thresh=0.1, k.max=3,

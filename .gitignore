@@ -257,4 +257,8 @@ TSWLatexianTemp*
 
 # currently
 report.tex
+points*
+plots
+
 report.pdf
+documentation.pdf

@@ -2,7 +2,7 @@
 % Please edit documentation in R/optimize-PBN.R
 \name{bestA}
 \alias{bestA}
-\title{Find best threshold parameters for regulatory function.}
+\title{Jointly optimize all threshold parameters.}
 \usage{
 bestA(ts.multi, net, g, i)
 }
@@ -19,8 +19,8 @@ bestA(ts.multi, net, g, i)
 A vector containing the best threshold parameters found.
 }
 \description{
-des
+Wrapping \code{\link{bestPartialA}}, this doesn't hold any values constant.
 }
-\details{
-See also \code{\link{bestPartialA}}
+\seealso{
+\code{\link{bestPartialA}}
 }

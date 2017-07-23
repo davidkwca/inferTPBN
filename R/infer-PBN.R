@@ -8,7 +8,7 @@
 ##'
 ##' @param ts.multi A list of timeseries.
 ##' @param p The noise probability to use for the network.
-##' @param n.regulator.max
+##' @param L.max The maximum number of regulatory networks to try to infer.
 ##' @param n.cores The number of cores to be used.
 ##' @param seed The random seed to use.
 ##' @param partial Whether or not to *also* infer a network where only partial
@@ -17,7 +17,13 @@
 ##' @param verbal Show progress report? Defaults to FALSE.
 ##' @return A list containing the inferred network and the time taken to perform
 ##'   the inference.
-##' @examples \dontrun{inferPBN(ts.multi)}
+##' @seealso \code{\link{FullRun}}
+##' @examples
+##' net.true <- createNetwork(inputProbabilities=c(0.5, 0.5), n=5, k=2)
+##' ts.multi <- simulateNetwork(net.true, 10, 20)
+##' inferred.list <- inferPBN(ts.multi, n.cores=1)
+##' net.inferred <- inferred.list$net.inferred
+##' time <- inferred.list$time.complete
 inferPBN <- function(ts.multi,
                      p=0.01,
                      L.max=2,
@@ -105,9 +111,6 @@ inferPBN <- function(ts.multi,
     returns$time.complete.update.partial <- time.complete.update.partial
     returns$time.complete.partial <- time.complete.partial
   }
-
-  ## returns$net.bestfit <- net.bestfit
-  ## returns$time.bestfit <- time.bestfit
 
   return(returns)
 }

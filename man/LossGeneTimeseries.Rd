@@ -2,7 +2,7 @@
 % Please edit documentation in R/loss.R
 \name{LossGeneTimeseries}
 \alias{LossGeneTimeseries}
-\title{The loss on timeseries data for a single gene.}
+\title{Computes the loss for a gene over a list of timeseries.}
 \usage{
 LossGeneTimeseries(ts.multi, net, g)
 }
@@ -15,4 +15,13 @@ LossGeneTimeseries(ts.multi, net, g)
 }
 \value{
 A float.
+}
+\description{
+Makes use of \code{\link{LossGene}}, which computes the loss for only a
+single timeseries.
+}
+\examples{
+net <- createNetwork(inputProbabilities=1, 5, 2, "homogeneous")
+ts.multi <- simulateNetwork(net, 10, 50) # Creates 50 timeseries à 10 points
+loss <- LossGeneTimeseries(ts.multi, net, 1)
 }

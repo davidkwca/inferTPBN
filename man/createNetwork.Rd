@@ -2,7 +2,7 @@
 % Please edit documentation in R/create-network.R
 \name{createNetwork}
 \alias{createNetwork}
-\title{Create network.}
+\title{Create random threshold PBN.}
 \usage{
 createNetwork(inputProbabilities = 1, ...)
 }
@@ -15,8 +15,15 @@ regulatory sets there are per gene.}
 \value{
 A network.
 }
-\examples{
-\dontrun{
-createNetwork(c(0.5, 0.5))
+\description{
+This first uses its parameters to let BoolNet create a network with the
+desired nodes, number of edges, topology, etc.
+It then creates adds all the relevant parameters to make it usable as a
+TPBN.
 }
+\examples{
+net <- createNetwork(inputProbabilities=1, 5, 2, topology="homogeneous")
+}
+\seealso{
+\code{\link{transformNetwork}} \code{\link{setupPBN}}
 }

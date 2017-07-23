@@ -2,7 +2,7 @@
 % Please edit documentation in R/create-network.R
 \name{transformNetwork}
 \alias{transformNetwork}
-\title{Turns BoolNet network into threshold PBN.}
+\title{Add TPBN parameters to a BoolNet network.}
 \usage{
 transformNetwork(net, p = 0.01)
 }
@@ -15,9 +15,14 @@ transformNetwork(net, p = 0.01)
 A threshold PBN.
 }
 \description{
-Takes a BoolNet network and add threshold parameters as well
-  associated logic functions to it.
+Add perturbation probability, threshold parameters, and Boolean functions
+to the network, to turn it into a TPBN.
 }
 \examples{
-\dontrun{transformNetwork(net)}
+# Create a BoolNet network and transform it.
+net <- generateRandomNKNetwork(5, 2, "homogeneous")
+net <- transformNetwork(net)
+}
+\seealso{
+\code{\link{createNetwork}} \code{\link{A}} \code{\link{aToFunction}}
 }

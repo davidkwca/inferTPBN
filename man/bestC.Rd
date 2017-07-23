@@ -2,7 +2,7 @@
 % Please edit documentation in R/optimize-PBN.R
 \name{bestC}
 \alias{bestC}
-\title{Find best probabilities for the regulatory functions for single gene.}
+\title{Find optimal probabilities for a set of regulatory functions.}
 \usage{
 bestC(ts.multi, net, g)
 }
@@ -17,8 +17,9 @@ bestC(ts.multi, net, g)
 A vector containing the probabilities optimizing the loss function.
 }
 \description{
-des
+Using standard optimization \code{solnp}, this tries to find the
+probabilities for a single gene which minimizes the loss function.
 }
-\details{
-det
+\seealso{
+\code{\link{optimizeC}}
 }
