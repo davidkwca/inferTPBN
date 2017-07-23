@@ -100,13 +100,29 @@ setupPBN <- function(n=20, k=5, p=0.01,
   return(list(net.true=net.true, ts.multi=ts.multi))
 }
 
-load.nets <- function(n=25, k=5,
-                      num.experiments=20, num.timepoints=10,
-                      p=0.01, topology="homogeneous"){
-  dir <- sprintf("points-%d_experiments-%d_topology-%s/",
-                 num.timepoints, num.experiments, topology)
-  file.name <- sprintf("%sn-%d_k-%d_p-%.2f", dir, n, k, p)
-  load(file.name)
-  return(list(net.true=setup.list$net.true,
-              net.inferred=inferred.list$net.inferred))
+##' Function to reproduce all data and plots.
+##'
+##'
+##' Running this script reproduces all the data and plots which have also been used
+##' in the PDF report. The only thing which might differ should be the times taken
+##' to do the inference, depending on your setup.
+##'
+##' @examples
+##' \dontrun{reproduce()}
+reproduce <- function(){
+  ## First, generate all the data..
+  for (n in c(5, 10, 20, 50)){
+    for (e in c(20, 50)){
+      for (topology in c("homogeneous", "scale_free")){
+        FullRun(n=n, k=k, num.experiments=e, topology=topology)
+      }
+    }
+  }
+  ## ..and now on to plotting it
+  plotStats(ns=c(5, 10, 20, 50), k=5, e=20, topology="homogeneous")
+  plotStats(ns=c(5, 10, 20, 50), k=5, e=50, topology="homogeneous")
+  plotStats(ns=c(5, 10, 20, 50), k=5, e=20, topology="scale_free")
+  plotStats(ns=c(5, 10, 20, 50), k=5, e=50, topology="scale_free")
+  plotFscores(ns=c(5, 10, 20, 50), es=c(20, 50), k=5)
+  plotFscores(ns=c(5, 10, 20, 50), es=c(20, 50), k=5, topology="scale_free")
 }
