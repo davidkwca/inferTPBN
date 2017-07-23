@@ -259,6 +259,8 @@ TSWLatexianTemp*
 report.tex
 points*
 plots
-
 report.pdf
 documentation.pdf
+
+!documents/report.pdf
+!documents/documentation.pdf
