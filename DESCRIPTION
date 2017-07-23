@@ -18,5 +18,3 @@ Imports: BoolNet,
     igraph,
     compositions,
     Rsolnp
-Suggests: devtools,
-    roxygen2
